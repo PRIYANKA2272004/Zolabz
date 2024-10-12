@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <style>
+        /* Your CSS styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('register.png');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #frmRegister p {
+            margin: 0 0 15px;
+        }
+
+        #frmRegister input[type="text"],
+        #frmRegister input[type="email"],
+        #frmRegister input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 12px;
+            border: 2px solid #a9a9a9;
+            border-radius: 25px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #frmRegister input[type="text"]:focus,
+        #frmRegister input[type="email"]:focus,
+        #frmRegister input[type="password"]:focus {
+            border-color: #ff00bf;
+        }
+
+        #frmRegister button[type="submit"] {
+            background-color: #ff00bf;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: calc(100% - 20px);
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        #frmRegister button[type="submit"]:hover {
+            background-color: #ff005e;
+        }
+
+        #frmRegister .login-link {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 16px;
+            color: #666;
+        }
+
+        #frmRegister .login-link a {
+            color: #ff00bf;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        #frmRegister .login-link a:hover {
+            color: #ff005e;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>REGISTER</h1>
+        <form action="log" method="post" id="frmRegister">
+            <p>
+                Fullname: <input type="text" name="fullname" id="fullname" required />
+            </p>
+            <p>
+                Email: <input type="email" name="email" id="email" required />
+                <span class="error" id="emailError"></span>
+            </p>
+            <p>
+                Username: <input type="text" name="username" id="username" required />
+                <span class="error" id="usernameError"></span>
+            </p>
+            <p>
+                Password: <input type="password" name="password" id="password" required />
+                <span class="error" id="passwordError"></span>
+            </p>
+            <p>
+                Confirm Password: <input type="password" name="confirmPassword" id="confirmPassword" required />
+                <span class="error" id="confirmPasswordError"></span>
+            </p>
+            <button type="submit" name="submit" ><a href="log" style="text-decoration:none;">SUBMIT</a></button>
+        </form>
+        <div class="login-link">Already have an account? <a href="log" style="text-decoration:none;">Login</a></div>
+    </div>
+    <script type="module">
+        // Firebase (Assuming Firebase setup is correct as previously shown)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "<your-api-key>",
+            authDomain: "<your-auth-domain>",
+            projectId: "<your-project-id>",
+            storageBucket: "<your-storage-bucket>",
+            messagingSenderId: "<your-messaging-sender-id>",
+            appId: "<your-app-id>"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.getElementById('frmRegister').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validate email format
+            const emailRegex = /\S+@\S+\.\S+/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').innerText = 'Please enter a valid email address';
+                return;
+            } else {
+                document.getElementById('emailError').innerText = '';
+            }
+
+            // Validate password strength
+            if (password.length < 6) {
+                document.getElementById('passwordError').innerText = 'Password must contain at least 6 characters';
+                return;
+            } else {
+                document.getElementById('passwordError').innerText = '';
+            }
+
+            // Validate password match
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').innerText = 'Passwords do not match';
+                return;
+            } else {
+                document.getElementById('confirmPasswordError').innerText = '';
+            }
+
+            // Validate username length
+            if (username.length < 3) {
+                document.getElementById('usernameError').innerText = 'Username must be at least 3 characters';
+                return;
+            } else {
+                document.getElementById('usernameError').innerText = '';
+            }
+
+            // Check if username already exists (assuming Firebase integration)
+            const dbRef = ref(db);
+            const userSnapshot = await get(child(dbRef, `users/${username}`));
+            if (userSnapshot.exists()) {
+                document.getElementById('usernameError').innerText = 'Username already taken';
+                return;
+            }
+
+            // Store user data in Firebase (example, adjust as per your setup)
+            await set(ref(db, 'users/' + username), {
+                fullname: fullname,
+                email: email,
+                password: password,
+                username: username
+            });
+
+            // Redirect to login page
+            alert('Registration successful! Redirecting to login...');
+            window.location.href = 'log';  // Redirect to the login page
+        });
+    </script>
+</body>
+</html>
+

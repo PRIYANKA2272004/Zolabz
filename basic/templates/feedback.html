@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drop your feedback here!</title>
+    <style>
+        /* CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('rgister.png');
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #000000;
+            margin-bottom: 20px;
+        }
+
+        #frmContact p {
+            margin: 0 0 15px;
+        }
+
+        #frmContact input[type="text"],
+        #frmContact input[type="email"],
+        #frmContact textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        #frmContact textarea {
+            height: 100px;
+        }
+
+        #frmContact button[type="submit"] {
+            background-color: #ff00bf;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        #frmContact button[type="submit"]:hover {
+            background-color: #ff005e;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Drop your feedback here!</h1>
+        <form id="frmContact">
+            <p>
+                Fullname: <input type="text" name="fullname" id="fullname" required />
+            </p>
+            <p>
+                Email: <input type="email" name="email" id="email" required />
+            </p>
+            <p>
+                Message: <textarea name="message" id="message" required></textarea>
+            </p>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script type="module">
+        // Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD1ZBxa85J5vkcq9TKyzwFb8rV-xNx0Mi0",
+            authDomain: "zolabzintern.firebaseapp.com",
+            databaseURL: "https://zolabzintern-default-rtdb.firebaseio.com",
+            projectId: "zolabzintern",
+            storageBucket: "zolabzintern.appspot.com",
+            messagingSenderId: "668363668045",
+            appId: "1:668363668045:web:dbaf41ba7fbc521279ba04"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.getElementById('frmContact').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            // Store feedback in Firebase with full name as key
+            set(ref(db, 'users/' + fullname), {
+                fullname: fullname,
+                email: email,
+                message: message
+            }).then(() => {
+                // Show success alert
+                alert('Your feedback is submitted!');
+                // Reset the form
+                document.getElementById('frmContact').reset();
+                // Redirect to the homepage
+                window.location.href = '/';
+            }).catch(error => {
+                // Handle errors
+                console.error('Error storing feedback:', error);
+                alert('An error occurred while submitting your feedback. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>

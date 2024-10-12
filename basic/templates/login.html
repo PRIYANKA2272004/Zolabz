@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://i.pinimg.com/736x/4c/42/9e/4c429e6b70c5851659fd224ccdec21c3.jpg');
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-repeat:no-repeat;
+            background-size:cover;
+        }
+
+        #container {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #frmLogin p {
+            margin: 0 0 15px;
+        }
+
+        #frmLogin input[type="text"],
+        #frmLogin input[type="password"],
+        #frmLogin input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        #frmLogin button[type="submit"] {
+            background-color: #ff00bf;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        #frmLogin button[type="submit"]:hover {
+            background-color: #ff005e;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .link {
+            margin-top: 10px;
+            text-align: center;
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Login</h1>
+        <form method="post" id="frmLogin" action="/">
+            <p>
+                Username: <input type="text" name="username" id="username" required />
+                <span class="error" id="usernameError"></span>
+            </p>
+            <p>
+                Email: <input type="email" name="email" id="email" required />
+                <span class="error" id="emailError"></span>
+            </p>
+            <p>
+                Password: <input type="password" name="password" id="password" required />
+                <span class="error" id="passwordError"></span>
+            </p>
+            <button type="submit" name="submit">Login</button>
+            <a class="link" href="reset">Forgot Password?</a>
+            <a class="link" href="registration">Don't have an account? Register</a>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+        const firebaseConfig = {
+    apiKey: "AIzaSyD1ZBxa85J5vkcq9TKyzwFb8rV-xNx0Mi0",
+    authDomain: "zolabzintern.firebaseapp.com",
+    projectId: "zolabzintern",
+    storageBucket: "zolabzintern.appspot.com",
+    messagingSenderId: "668363668045",
+    appId: "1:668363668045:web:dbaf41ba7fbc521279ba04"
+  }; 
+
+        // Initialize Firebase app
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Form submission event listener
+        document.getElementById('frmLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Store user login information in Firebase
+            set(ref(db, 'users/' + username), {
+                email: email,
+                password: password
+            })
+            .then(() => {
+                alert('Login information stored successfully!');
+                document.getElementById('frmLogin').reset();
+                window.location.href = '/';
+            })
+            .catch((error) => {
+                console.error('Error storing user data:', error);
+            });
+        });
+    </script>
+</body>
+</html>

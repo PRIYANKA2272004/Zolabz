@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom right, #9b4460, #301934); /* Dark pink and dark purple */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            background-color: #c7e0f4; /* Change to desired color */
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333; /* Change color as desired */
+            margin-bottom: 20px;
+        }
+
+        #frmResetPassword p {
+            margin: 0 0 15px;
+        }
+
+        #frmResetPassword input[type="email"],
+        #frmResetPassword input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Ensure padding and border are included in width */
+            margin-bottom: 15px;
+        }
+
+        #frmResetPassword button[type="submit"] {
+            background-color: #ff00bf;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%; /* Make button fill entire width */
+            text-align: center; /* Center align the button */
+        }
+
+        #frmResetPassword button[type="submit"]:hover {
+            background-color: #ff005e;
+        }
+
+        #resetMessage {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #resetMessage p {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body style="background-image:url('rgister.png');">
+    <div id="container">
+        <h1>Reset Your Password</h1>
+        <form method="post" id="frmResetPassword" action="log" onsubmit="submitResetPassword(); return false;">
+            <p>
+                Email: <input type="email" name="email" id="email" required />
+            </p>
+            <p>
+                New Password: <input type="password" name="newPassword" id="newPassword" required />
+            </p>
+            <p>
+                Confirm Password: <input type="password" name="confirmPassword" id="confirmPassword" required />
+            </p>
+            <button type="submit" name="submit"><a href="log" style="text-decoration: none;">Reset Password</a></button>
+        </form>
+        <div id="resetMessage">
+            <p>Password reseted successfully</p>
+            <p>Click <a href="log">here</a> to login.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import the necessary functions from Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+        
+        // Firebase configuration
+        const firebaseConfig = {
+  apiKey: "AIzaSyAoara2OmON-SoHPLnjuyOLno4TfPDWBwc",
+  authDomain: "reset-page-fcb48.firebaseapp.com",
+  databaseURL: "https://reset-page-fcb48-default-rtdb.firebaseio.com",
+  projectId: "reset-page-fcb48",
+  storageBucket: "reset-page-fcb48.appspot.com",
+  messagingSenderId: "503122381834",
+  appId: "1:503122381834:web:96178adb64cdfde977e3f3"
+};
+
+        // Initialize Firebase app
+        const app = initializeApp(firebaseConfig);
+        
+        // Get a reference to the database service
+        const db = getDatabase();
+
+        document.getElementById('frmResetPassword').addEventListener('submit', function(e) {
+            e.preventDefault();
+    
+            const email = document.getElementById("email").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (newPassword !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+
+            // Save reset password request to database
+            const resetRequestRef = ref(db, 'passwordResetRequests');
+            push(resetRequestRef, {
+                email: email,
+                newPassword: newPassword
+            });
+
+            document.getElementById("resetMessage").style.display = "block";
+    
+            // Reset the form
+            document.getElementById('frmResetPassword').reset();
+            window.location.href = '/log';
+        });
+    </script>
+</body>
+</html
